@@ -16,18 +16,18 @@ jobs:
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.HOST_DNS }} >> ~/.ssh/known_hosts
 
       - name: Copy files to remote server
         run: |
-          scp -i ~/.ssh/id_rsa -r . ${{ secrets.USER }}@${{ secrets.HOST }}:${{ secrets.TARGET_PATH }}
+          scp -i ~/.ssh/id_rsa -r . ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }}:${{ secrets.TARGET_DIR }}
 
       - name: Deploy and restart container on EC2
         run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.USER }}@${{ secrets.HOST }} << 'EOF'
-            cd ${{ secrets.TARGET_PATH }}
+          ssh -i ~/.ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }} << 'EOF'
+            cd ${{ secrets.TARGET_DIR }}
             docker build -t apache-eb-app .
             docker stop apache-eb-app || true
             docker rm apache-eb-app || true
