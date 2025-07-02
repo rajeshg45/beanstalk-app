@@ -28,8 +28,8 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa ${{ secrets.USERNAME }}@${{ secrets.HOST_DNS }} << 'EOF'
             cd ${{ secrets.TARGET_DIR }}
-            docker build -t apache-eb-app .
-            docker stop apache-eb-app || true
-            docker rm apache-eb-app || true
-            docker run -d -p 80:80 --name apache-eb-app apache-eb-app
+            docker build -t beanstalk-app .
+            docker stop beanstalk-app || true
+            docker rm beanstalk-app || true
+            docker run -d -p 80:80 --name beanstalk-app beanstalk-app
           EOF
